@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Empire Simulator - Ultimate Edition: Advanced Operations & Menu Engineering</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #E8B44B;
+            --gold-dark: #C9962D;
+            --navy: #1B2A41;
+            --navy-light: #2D3E56;
+            --teal: #3ABAB4;
+            --coral: #FF6B6B;
+            --sage: #7FB069;
+            --lavender: #A594F9;
+            --bg-primary: #0F1419;
+            --bg-secondary: #1B2A41;
+            --bg-card: #253446;
+            --text-primary: #F7F9FA;
+            --text-secondary: #B8C5D6;
+            --border: #3A4E6B;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --glow: rgba(232, 180, 75, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--navy) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(27, 42, 65, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--gold);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.2rem;
+            color: var(--gold);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px var(--glow);
+        }
+
+        .stage-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--teal), var(--sage));
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-left: 1rem;
+            box-shadow: 0 4px 15px rgba(58, 186, 180, 0.3);
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .stat-value.negative {
+            color: var(--coral);
+        }
+
+        .stat-value.positive {
+            color: var(--sage);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .tab:hover {
+            color: var(--gold);
+            background: rgba(232, 180, 75, 0.1);
+        }
+
+        .tab.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+            background: rgba(232, 180, 75, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px var(--shadow);
+            border-color: var(--gold);
+        }
+
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .metric-value.success {
+            color: var(--sage);
+        }
+
+        .metric-value.warning {
+            color: var(--gold);
+        }
+
+        .metric-value.danger {
+            color: var(--coral);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Manrope', sans-serif;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(232, 180, 75, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--navy-light);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--navy);
+        }
+
+        .btn-danger {
+            background: var(--coral);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--sage);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+        }
+
+        .location-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .location-card:hover {
+            border-color: var(--gold);
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .location-card.selected {
+            border: 2px solid var(--gold);
+            background: rgba(232, 180, 75, 0.05);
+        }
+
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .location-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .location-flag {
+            font-size: 1.5rem;
+        }
+
+        .location-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .location-stat {
+            text-align: center;
+        }
+
+        .location-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .location-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--glow);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 40px var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .close-modal {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            color: var(--gold);
+        }
+
+        .ingredient-list {
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .ingredient-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-info {
+            flex: 1;
+        }
+
+        .ingredient-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .ingredient-details {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .ingredient-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .ingredient-quantity {
+            width: 80px;
+            padding: 0.5rem;
+        }
+
+        .campaign-card, .supplier-card, .revenue-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .campaign-header, .supplier-header, .revenue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .campaign-name, .supplier-name, .revenue-name {
+            font-weight: 700;
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: var(--sage);
+            color: white;
+        }
+
+        .status-inactive {
+            background: var(--text-secondary);
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-card);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+            transition: width 0.3s ease;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: rgba(58, 186, 180, 0.1);
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .alert-success {
+            background: rgba(127, 176, 105, 0.1);
+            border-color: var(--sage);
+            color: var(--sage);
+        }
+
+        .alert-warning {
+            background: rgba(232, 180, 75, 0.1);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .alert-danger {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: var(--coral);
+            color: var(--coral);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-stats {
+                gap: 1rem;
+            }
+        }
+
+        .menu-item-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .menu-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .menu-item-name {
+            font-weight: 700;
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+
+        .food-cost-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .food-cost-excellent {
+            background: var(--sage);
+            color: white;
+        }
+
+        .food-cost-good {
+            background: var(--teal);
+            color: white;
+        }
+
+        .food-cost-fair {
+            background: var(--gold);
+            color: var(--bg-primary);
+        }
+
+        .food-cost-poor {
+            background: var(--coral);
+            color: white;
+        }
+
+        .season-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .season-icon {
+            font-size: 1.5rem;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>
+                    Restaurant Empire Simulator
+                    <span class="stage-badge">Ultimate Edition</span>
+                </h1>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Total Cash</div>
+                    <div class="stat-value" id="headerCash">$200,000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Locations</div>
+                    <div class="stat-value" id="headerLocations">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Monthly Profit</div>
+                    <div class="stat-value" id="headerProfit">$0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="actions-bar">
+            <button class="btn btn-primary" onclick="saveGame()">💾 Save Game</button>
+            <button class="btn btn-secondary" onclick="loadGame()">📂 Load Game</button>
+            <button class="btn btn-secondary" onclick="resetGame()">🔄 New Game</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('empire')">🏛️ Empire Dashboard</button>
+            <button class="tab" onclick="switchTab('locations')">📍 Locations</button>
+            <button class="tab" onclick="switchTab('menu')">📋 Menu Engineering</button>
+            <button class="tab" onclick="switchTab('recipes')">👨‍🍳 Recipe Builder</button>
+            <button class="tab" onclick="switchTab('analytics')">📊 Analytics</button>
+        </div>
+
+        <!-- Empire Dashboard Tab -->
+        <div id="empire-tab" class="tab-content active">
+            <h2 style="color: var(--gold); font-family: 'Crimson Pro', serif; font-size: 1.8rem; margin-bottom: 1.5rem;">
+                Empire Overview
+            </h2>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">💰 Financial Summary</div>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Cash</span>
+                        <span class="metric-value" id="empireCash">$200,000</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Monthly Revenue</span>
+                        <span class="metric-value success" id="empireRevenue">$0</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Monthly Expenses</span>
+                        <span class="metric-value danger" id="empireExpenses">$0</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Net Profit</span>
+                        <span class="metric-value" id="empireProfit">$0</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">🏪 Portfolio</div>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Locations</span>
+                        <span class="metric-value" id="totalLocations">0</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Rating</span>
+                        <span class="metric-value" id="avgRating">0.0</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Customers/Day</span>
+                        <span class="metric-value" id="totalCustomers">0</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Menu Items</span>
+                        <span class="metric-value" id="totalMenuItems">0</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">📈 Performance</div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Food Cost %</span>
+                        <span class="metric-value" id="avgFoodCost">0%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Profit Margin</span>
+                        <span class="metric-value" id="avgMargin">0%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Brand Awareness</span>
+                        <span class="metric-value" id="empireBrand">10%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🌍 Your Locations</div>
+                <div id="empireLocationsList">
+                    <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                        No locations yet. Go to the Locations tab to open your first restaurant!
+                    </p>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" style="margin-top: 1rem;" onclick="switchTab('locations')">
+                ➕ Add New Location
+            </button>
+        </div>
+
+        <!-- Locations Tab -->
+        <div id="locations-tab" class="tab-content">
+            <h2 style="color: var(--gold); font-family: 'Crimson Pro', serif; font-size: 1.8rem; margin-bottom: 1.5rem;">
+                Manage Locations
+            </h2>
+
+            <div id="locationsList">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <button class="btn btn-primary" onclick="openLocationModal()">
+                ➕ Open New Location
+            </button>
+
+            <!-- Location Details Panel (shown when location selected) -->
+            <div id="locationDetails" style="display: none; margin-top: 2rem;">
+                <div class="card">
+                    <div class="card-header" id="selectedLocationName">Location Details</div>
+                    
+                    <div class="tabs" style="margin-top: 1rem;">
+                        <button class="tab active" onclick="switchLocationTab('overview')">Overview</button>
+                        <button class="tab" onclick="switchLocationTab('marketing')">📢 Marketing</button>
+                        <button class="tab" onclick="switchLocationTab('suppliers')">🚚 Suppliers</button>
+                        <button class="tab" onclick="switchLocationTab('revenue')">💰 Revenue Streams</button>
+                        <button class="tab" onclick="switchLocationTab('seasonal')">🌦️ Seasonal</button>
+                    </div>
+
+                    <div id="loc-overview-tab" class="tab-content active" style="margin-top: 1rem;">
+                        <!-- Overview content -->
+                        <div class="dashboard-grid">
+                            <div class="card">
+                                <div class="card-header">Financial</div>
+                                <div id="locFinancials"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">Operations</div>
+                                <div id="locOperations"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="loc-marketing-tab" class="tab-content">
+                        <div id="marketingContent"></div>
+                    </div>
+
+                    <div id="loc-suppliers-tab" class="tab-content">
+                        <div id="suppliersContent"></div>
+                    </div>
+
+                    <div id="loc-revenue-tab" class="tab-content">
+                        <div id="revenueContent"></div>
+                    </div>
+
+                    <div id="loc-seasonal-tab" class="tab-content">
+                        <div id="seasonalContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Engineering Tab -->
+        <div id="menu-tab" class="tab-content">
+            <h2 style="color: var(--gold); font-family: 'Crimson Pro', serif; font-size: 1.8rem; margin-bottom: 1.5rem;">
+                Menu Engineering
+            </h2>
+
+            <div class="alert alert-info">
+                <strong>💡 Pro Tip:</strong> Target 28-32% food cost for optimal profitability. Price items at 3-3.5x ingredient cost.
+            </div>
+
+            <div id="menuItemsList">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <button class="btn btn-primary" onclick="switchTab('recipes')" style="margin-top: 1rem;">
+                ➕ Create New Menu Item
+            </button>
+        </div>
+
+        <!-- Recipe Builder Tab -->
+        <div id="recipes-tab" class="tab-content">
+            <h2 style="color: var(--gold); font-family: 'Crimson Pro', serif; font-size: 1.8rem; margin-bottom: 1.5rem;">
+                Recipe Builder
+            </h2>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">Recipe Information</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Dish Name</label>
+                        <input type="text" id="recipeName" placeholder="e.g., Grilled Salmon with Asparagus">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Category</label>
+                        <select id="recipeCategory">
+                            <option value="appetizer">Appetizer</option>
+                            <option value="entree">Entrée</option>
+                            <option value="dessert">Dessert</option>
+                            <option value="beverage">Beverage</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Description</label>
+                        <textarea id="recipeDescription" rows="3" placeholder="Describe your dish..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Menu Price ($)</label>
+                        <input type="number" id="recipePrice" step="0.01" min="0" placeholder="35.00">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Cost Analysis</div>
+                    
+                    <div class="metric-row">
+                        <span class="metric-label">Total Ingredient Cost</span>
+                        <span class="metric-value" id="totalIngredientCost">$0.00</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Menu Price</span>
+                        <span class="metric-value" id="displayMenuPrice">$0.00</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Food Cost %</span>
+                        <span class="metric-value" id="displayFoodCost">0%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Profit per Dish</span>
+                        <span class="metric-value success" id="displayProfit">$0.00</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Profit Margin</span>
+                        <span class="metric-value success" id="displayMargin">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">Ingredients</div>
+                
+                <button class="btn btn-secondary" onclick="openIngredientModal()" style="margin-bottom: 1rem;">
+                    ➕ Add Ingredient
+                </button>
+
+                <div id="recipeIngredientsList">
+                    <p style="color: var(--text-secondary); text-align: center; padding: 1rem;">
+                        No ingredients added yet
+                    </p>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <button class="btn btn-primary" onclick="saveMenuItem()">
+                    💾 Save Menu Item
+                </button>
+                <button class="btn btn-secondary" onclick="clearRecipe()">
+                    🔄 Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics-tab" class="tab-content">
+            <h2 style="color: var(--gold); font-family: 'Crimson Pro', serif; font-size: 1.8rem; margin-bottom: 1.5rem;">
+                Business Analytics
+            </h2>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">Top Performing Locations</div>
+                    <div id="topLocations">
+                        <p style="color: var(--text-secondary);">No data yet</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Most Profitable Menu Items</div>
+                    <div id="topMenuItems">
+                        <p style="color: var(--text-secondary);">No data yet</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Revenue Breakdown</div>
+                    <div id="revenueBreakdown">
+                        <p style="color: var(--text-secondary);">No data yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Selection Modal -->
+    <div id="locationModal" class="modal">
+        <div class="modal-content" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Select Location</h2>
+                <button class="close-modal" onclick="closeLocationModal()">×</button>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Opening Strategy</label>
+                <select id="openingStrategy" onchange="updateLocationCosts()">
+                    <option value="new">Build New Restaurant</option>
+                    <option value="acquire">Acquire Existing Restaurant</option>
+                </select>
+            </div>
+
+            <div id="globalLocationsList" class="grid-2" style="margin-top: 1rem;">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Ingredient Selection Modal -->
+    <div id="ingredientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Ingredient</h2>
+                <button class="close-modal" onclick="closeIngredientModal()">×</button>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Search Ingredients</label>
+                <input type="text" id="ingredientSearch" placeholder="Search by name..." oninput="filterIngredients()">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Filter by Category</label>
+                <select id="ingredientCategoryFilter" onchange="filterIngredients()">
+                    <option value="">All Categories</option>
+                    <option value="Protein">Protein</option>
+                    <option value="Vegetable">Vegetables</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Grain">Grains & Pasta</option>
+                    <option value="Oil">Oils & Fats</option>
+                    <option value="Herb">Herbs</option>
+                    <option value="Spice">Spices</option>
+                    <option value="Condiment">Sauces & Condiments</option>
+                    <option value="Fruit">Fruits</option>
+                    <option value="Specialty">Specialty Items</option>
+                </select>
+            </div>
+
+            <div class="ingredient-list" id="availableIngredients">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // GAME STATE
+        // ========================================
+        let gameState = {
+            cash: 200000,
+            locations: [],
+            menuItems: [],
+            currentRecipe: {
+                name: '',
+                category: 'entree',
+                description: '',
+                price: 0,
+                ingredients: []
+            },
+            selectedLocation: null
+        };
+
+        // ========================================
+        // GLOBAL DATA
+        // ========================================
+        
+        // 25 Global Locations
+        const LOCATIONS = [
+            // North America
+            { id: 1, name: 'New York City', country: 'USA', flag: '🗽', traffic: 'Very High', rentMonthly: 12000, acquisitionCost: 180000, newBuildCost: 220000, avgCheck: 65, marketSize: 95 },
+            { id: 2, name: 'San Francisco', country: 'USA', flag: '🌉', traffic: 'High', rentMonthly: 10000, acquisitionCost: 160000, newBuildCost: 200000, avgCheck: 60, marketSize: 85 },
+            { id: 3, name: 'Chicago', country: 'USA', flag: '🏙️', traffic: 'High', rentMonthly: 8000, acquisitionCost: 140000, newBuildCost: 175000, avgCheck: 55, marketSize: 88 },
+            { id: 4, name: 'Miami', country: 'USA', flag: '🌴', traffic: 'Very High', rentMonthly: 9000, acquisitionCost: 150000, newBuildCost: 185000, avgCheck: 58, marketSize: 82 },
+            { id: 5, name: 'Austin', country: 'USA', flag: '🎸', traffic: 'Medium', rentMonthly: 6500, acquisitionCost: 120000, newBuildCost: 155000, avgCheck: 48, marketSize: 75 },
+            { id: 6, name: 'Mexico City', country: 'Mexico', flag: '🌮', traffic: 'High', rentMonthly: 5000, acquisitionCost: 100000, newBuildCost: 135000, avgCheck: 35, marketSize: 90 },
+            
+            // Europe
+            { id: 7, name: 'London', country: 'UK', flag: '🏰', traffic: 'Very High', rentMonthly: 11000, acquisitionCost: 175000, newBuildCost: 215000, avgCheck: 70, marketSize: 92 },
+            { id: 8, name: 'Paris', country: 'France', flag: '🥐', traffic: 'Very High', rentMonthly: 10500, acquisitionCost: 170000, newBuildCost: 210000, avgCheck: 68, marketSize: 90 },
+            { id: 9, name: 'Barcelona', country: 'Spain', flag: '🥘', traffic: 'High', rentMonthly: 7500, acquisitionCost: 130000, newBuildCost: 165000, avgCheck: 52, marketSize: 83 },
+            { id: 10, name: 'Amsterdam', country: 'Netherlands', flag: '🚲', traffic: 'Medium', rentMonthly: 8500, acquisitionCost: 145000, newBuildCost: 180000, avgCheck: 56, marketSize: 78 },
+            { id: 11, name: 'Berlin', country: 'Germany', flag: '🍺', traffic: 'High', rentMonthly: 7000, acquisitionCost: 125000, newBuildCost: 160000, avgCheck: 50, marketSize: 85 },
+            { id: 12, name: 'Rome', country: 'Italy', flag: '🍕', traffic: 'Very High', rentMonthly: 8000, acquisitionCost: 135000, newBuildCost: 170000, avgCheck: 54, marketSize: 87 },
+            { id: 13, name: 'Copenhagen', country: 'Denmark', flag: '🧜‍♀️', traffic: 'Medium', rentMonthly: 9000, acquisitionCost: 150000, newBuildCost: 185000, avgCheck: 75, marketSize: 72 },
+            
+            // Asia
+            { id: 14, name: 'Tokyo', country: 'Japan', flag: '🗼', traffic: 'Very High', rentMonthly: 13000, acquisitionCost: 190000, newBuildCost: 230000, avgCheck: 72, marketSize: 98 },
+            { id: 15, name: 'Seoul', country: 'South Korea', flag: '🌸', traffic: 'Very High', rentMonthly: 9500, acquisitionCost: 155000, newBuildCost: 190000, avgCheck: 48, marketSize: 93 },
+            { id: 16, name: 'Singapore', country: 'Singapore', flag: '🦁', traffic: 'Very High', rentMonthly: 11500, acquisitionCost: 180000, newBuildCost: 220000, avgCheck: 65, marketSize: 86 },
+            { id: 17, name: 'Hong Kong', country: 'China', flag: '🇭🇰', traffic: 'Very High', rentMonthly: 14000, acquisitionCost: 200000, newBuildCost: 240000, avgCheck: 68, marketSize: 95 },
+            { id: 18, name: 'Bangkok', country: 'Thailand', flag: '🛕', traffic: 'High', rentMonthly: 4500, acquisitionCost: 90000, newBuildCost: 125000, avgCheck: 32, marketSize: 89 },
+            { id: 19, name: 'Mumbai', country: 'India', flag: '🍛', traffic: 'Very High', rentMonthly: 5500, acquisitionCost: 95000, newBuildCost: 130000, avgCheck: 28, marketSize: 94 },
+            { id: 20, name: 'Dubai', country: 'UAE', flag: '🏜️', traffic: 'Very High', rentMonthly: 12000, acquisitionCost: 185000, newBuildCost: 225000, avgCheck: 80, marketSize: 84 },
+            
+            // Australia & South America
+            { id: 21, name: 'Sydney', country: 'Australia', flag: '🦘', traffic: 'High', rentMonthly: 10000, acquisitionCost: 165000, newBuildCost: 200000, avgCheck: 62, marketSize: 81 },
+            { id: 22, name: 'Melbourne', country: 'Australia', flag: '☕', traffic: 'High', rentMonthly: 8500, acquisitionCost: 145000, newBuildCost: 180000, avgCheck: 58, marketSize: 79 },
+            { id: 23, name: 'Buenos Aires', country: 'Argentina', flag: '🥩', traffic: 'Medium', rentMonthly: 4000, acquisitionCost: 85000, newBuildCost: 120000, avgCheck: 38, marketSize: 77 },
+            { id: 24, name: 'São Paulo', country: 'Brazil', flag: '🇧🇷', traffic: 'High', rentMonthly: 5500, acquisitionCost: 105000, newBuildCost: 140000, avgCheck: 42, marketSize: 88 },
+            
+            // Africa
+            { id: 25, name: 'Cape Town', country: 'South Africa', flag: '🦒', traffic: 'Medium', rentMonthly: 4500, acquisitionCost: 88000, newBuildCost: 122000, avgCheck: 40, marketSize: 73 }
+        ];
+
+        // Comprehensive Ingredient Database (100+ ingredients)
+        const INGREDIENT_DATABASE = [
+            // Proteins
+            { id: 1, name: 'Chicken Breast', category: 'Protein', unit: 'lb', costPerUnit: 3.99 },
+            { id: 2, name: 'Salmon Fillet', category: 'Protein', unit: 'lb', costPerUnit: 12.99 },
+            { id: 3, name: 'Beef Tenderloin', category: 'Protein', unit: 'lb', costPerUnit: 18.99 },
+            { id: 4, name: 'Ground Beef 80/20', category: 'Protein', unit: 'lb', costPerUnit: 4.99 },
+            { id: 5, name: 'Pork Chop', category: 'Protein', unit: 'lb', costPerUnit: 5.99 },
+            { id: 6, name: 'Shrimp 16/20', category: 'Protein', unit: 'lb', costPerUnit: 14.99 },
+            { id: 7, name: 'Scallops', category: 'Protein', unit: 'lb', costPerUnit: 22.99 },
+            { id: 8, name: 'Tuna Steak', category: 'Protein', unit: 'lb', costPerUnit: 16.99 },
+            { id: 9, name: 'Lamb Rack', category: 'Protein', unit: 'lb', costPerUnit: 19.99 },
+            { id: 10, name: 'Duck Breast', category: 'Protein', unit: 'lb', costPerUnit: 13.99 },
+            { id: 11, name: 'Turkey Breast', category: 'Protein', unit: 'lb', costPerUnit: 4.49 },
+            { id: 12, name: 'Bacon', category: 'Protein', unit: 'lb', costPerUnit: 6.99 },
+            { id: 13, name: 'Eggs (dozen)', category: 'Protein', unit: 'each', costPerUnit: 3.99 },
+            { id: 14, name: 'Tofu', category: 'Protein', unit: 'lb', costPerUnit: 2.49 },
+            
+            // Vegetables
+            { id: 15, name: 'Tomatoes', category: 'Vegetable', unit: 'lb', costPerUnit: 1.99 },
+            { id: 16, name: 'Onions', category: 'Vegetable', unit: 'lb', costPerUnit: 0.99 },
+            { id: 17, name: 'Garlic', category: 'Vegetable', unit: 'lb', costPerUnit: 3.99 },
+            { id: 18, name: 'Bell Peppers', category: 'Vegetable', unit: 'lb', costPerUnit: 2.49 },
+            { id: 19, name: 'Carrots', category: 'Vegetable', unit: 'lb', costPerUnit: 1.29 },
+            { id: 20, name: 'Celery', category: 'Vegetable', unit: 'lb', costPerUnit: 1.49 },
+            { id: 21, name: 'Potatoes', category: 'Vegetable', unit: 'lb', costPerUnit: 0.89 },
+            { id: 22, name: 'Asparagus', category: 'Vegetable', unit: 'lb', costPerUnit: 3.99 },
+            { id: 23, name: 'Broccoli', category: 'Vegetable', unit: 'lb', costPerUnit: 1.99 },
+            { id: 24, name: 'Mushrooms', category: 'Vegetable', unit: 'lb', costPerUnit: 4.99 },
+            { id: 25, name: 'Spinach', category: 'Vegetable', unit: 'lb', costPerUnit: 2.99 },
+            { id: 26, name: 'Lettuce', category: 'Vegetable', unit: 'each', costPerUnit: 1.99 },
+            { id: 27, name: 'Zucchini', category: 'Vegetable', unit: 'lb', costPerUnit: 1.79 },
+            { id: 28, name: 'Eggplant', category: 'Vegetable', unit: 'lb', costPerUnit: 2.29 },
+            { id: 29, name: 'Kale', category: 'Vegetable', unit: 'lb', costPerUnit: 2.49 },
+            { id: 30, name: 'Brussels Sprouts', category: 'Vegetable', unit: 'lb', costPerUnit: 2.99 },
+            
+            // Dairy
+            { id: 31, name: 'Butter', category: 'Dairy', unit: 'lb', costPerUnit: 4.99 },
+            { id: 32, name: 'Heavy Cream', category: 'Dairy', unit: 'cup', costPerUnit: 0.89 },
+            { id: 33, name: 'Milk (whole)', category: 'Dairy', unit: 'cup', costPerUnit: 0.35 },
+            { id: 34, name: 'Parmesan Cheese', category: 'Dairy', unit: 'lb', costPerUnit: 12.99 },
+            { id: 35, name: 'Mozzarella Cheese', category: 'Dairy', unit: 'lb', costPerUnit: 5.99 },
+            { id: 36, name: 'Cheddar Cheese', category: 'Dairy', unit: 'lb', costPerUnit: 6.99 },
+            { id: 37, name: 'Cream Cheese', category: 'Dairy', unit: 'lb', costPerUnit: 3.99 },
+            { id: 38, name: 'Sour Cream', category: 'Dairy', unit: 'cup', costPerUnit: 0.79 },
+            { id: 39, name: 'Yogurt', category: 'Dairy', unit: 'cup', costPerUnit: 0.99 },
+            
+            // Grains & Pasta
+            { id: 40, name: 'Rice (white)', category: 'Grain', unit: 'lb', costPerUnit: 1.29 },
+            { id: 41, name: 'Rice (arborio)', category: 'Grain', unit: 'lb', costPerUnit: 2.99 },
+            { id: 42, name: 'Pasta (dried)', category: 'Grain', unit: 'lb', costPerUnit: 1.49 },
+            { id: 43, name: 'Fresh Pasta', category: 'Grain', unit: 'lb', costPerUnit: 4.99 },
+            { id: 44, name: 'Flour (all-purpose)', category: 'Grain', unit: 'lb', costPerUnit: 0.79 },
+            { id: 45, name: 'Bread (loaf)', category: 'Grain', unit: 'each', costPerUnit: 2.99 },
+            { id: 46, name: 'Quinoa', category: 'Grain', unit: 'lb', costPerUnit: 4.99 },
+            { id: 47, name: 'Couscous', category: 'Grain', unit: 'lb', costPerUnit: 2.49 },
+            
+            // Oils & Fats
+            { id: 48, name: 'Olive Oil (extra virgin)', category: 'Oil', unit: 'cup', costPerUnit: 1.99 },
+            { id: 49, name: 'Vegetable Oil', category: 'Oil', unit: 'cup', costPerUnit: 0.49 },
+            { id: 50, name: 'Sesame Oil', category: 'Oil', unit: 'tbsp', costPerUnit: 0.39 },
+            { id: 51, name: 'Coconut Oil', category: 'Oil', unit: 'cup', costPerUnit: 1.29 },
+            
+            // Herbs & Spices
+            { id: 52, name: 'Salt', category: 'Spice', unit: 'oz', costPerUnit: 0.15 },
+            { id: 53, name: 'Black Pepper', category: 'Spice', unit: 'oz', costPerUnit: 0.89 },
+            { id: 54, name: 'Basil (fresh)', category: 'Herb', unit: 'oz', costPerUnit: 1.99 },
+            { id: 55, name: 'Parsley (fresh)', category: 'Herb', unit: 'oz', costPerUnit: 1.49 },
+            { id: 56, name: 'Thyme (fresh)', category: 'Herb', unit: 'oz', costPerUnit: 2.49 },
+            { id: 57, name: 'Rosemary (fresh)', category: 'Herb', unit: 'oz', costPerUnit: 2.29 },
+            { id: 58, name: 'Oregano (dried)', category: 'Spice', unit: 'oz', costPerUnit: 0.79 },
+            { id: 59, name: 'Cumin', category: 'Spice', unit: 'oz', costPerUnit: 0.99 },
+            { id: 60, name: 'Paprika', category: 'Spice', unit: 'oz', costPerUnit: 1.29 },
+            { id: 61, name: 'Cayenne Pepper', category: 'Spice', unit: 'oz', costPerUnit: 1.49 },
+            { id: 62, name: 'Cinnamon', category: 'Spice', unit: 'oz', costPerUnit: 1.19 },
+            { id: 63, name: 'Ginger (fresh)', category: 'Herb', unit: 'oz', costPerUnit: 0.99 },
+            { id: 64, name: 'Cilantro (fresh)', category: 'Herb', unit: 'oz', costPerUnit: 1.29 },
+            
+            // Sauces & Condiments
+            { id: 65, name: 'Soy Sauce', category: 'Condiment', unit: 'cup', costPerUnit: 0.79 },
+            { id: 66, name: 'Worcestershire Sauce', category: 'Condiment', unit: 'tbsp', costPerUnit: 0.19 },
+            { id: 67, name: 'Balsamic Vinegar', category: 'Condiment', unit: 'cup', costPerUnit: 2.99 },
+            { id: 68, name: 'Red Wine Vinegar', category: 'Condiment', unit: 'cup', costPerUnit: 1.49 },
+            { id: 69, name: 'Dijon Mustard', category: 'Condiment', unit: 'tbsp', costPerUnit: 0.29 },
+            { id: 70, name: 'Honey', category: 'Condiment', unit: 'cup', costPerUnit: 3.99 },
+            { id: 71, name: 'Maple Syrup', category: 'Condiment', unit: 'cup', costPerUnit: 5.99 },
+            { id: 72, name: 'Tomato Paste', category: 'Condiment', unit: 'oz', costPerUnit: 0.49 },
+            { id: 73, name: 'Chicken Stock', category: 'Condiment', unit: 'cup', costPerUnit: 0.59 },
+            { id: 74, name: 'Beef Stock', category: 'Condiment', unit: 'cup', costPerUnit: 0.69 },
+            { id: 75, name: 'Vegetable Stock', category: 'Condiment', unit: 'cup', costPerUnit: 0.49 },
+            
+            // Fruits
+            { id: 76, name: 'Lemons', category: 'Fruit', unit: 'each', costPerUnit: 0.79 },
+            { id: 77, name: 'Limes', category: 'Fruit', unit: 'each', costPerUnit: 0.59 },
+            { id: 78, name: 'Oranges', category: 'Fruit', unit: 'each', costPerUnit: 0.89 },
+            { id: 79, name: 'Apples', category: 'Fruit', unit: 'lb', costPerUnit: 1.99 },
+            { id: 80, name: 'Strawberries', category: 'Fruit', unit: 'lb', costPerUnit: 3.99 },
+            { id: 81, name: 'Blueberries', category: 'Fruit', unit: 'lb', costPerUnit: 4.99 },
+            { id: 82, name: 'Raspberries', category: 'Fruit', unit: 'lb', costPerUnit: 5.99 },
+            { id: 83, name: 'Avocado', category: 'Fruit', unit: 'each', costPerUnit: 1.49 },
+            { id: 84, name: 'Mango', category: 'Fruit', unit: 'each', costPerUnit: 1.99 },
+            { id: 85, name: 'Pineapple', category: 'Fruit', unit: 'each', costPerUnit: 3.49 },
+            
+            // Specialty Items
+            { id: 86, name: 'Truffle Oil', category: 'Specialty', unit: 'oz', costPerUnit: 8.99 },
+            { id: 87, name: 'Caviar', category: 'Specialty', unit: 'oz', costPerUnit: 45.00 },
+            { id: 88, name: 'Saffron', category: 'Specialty', unit: 'g', costPerUnit: 12.99 },
+            { id: 89, name: 'Vanilla Bean', category: 'Specialty', unit: 'each', costPerUnit: 3.99 },
+            { id: 90, name: 'Dark Chocolate (70%)', category: 'Specialty', unit: 'lb', costPerUnit: 9.99 }
+        ];
+
+        // Campaign Types (Stage 4)
+        const CAMPAIGN_TYPES = {
+            social: { name: 'Social Media Campaign', cost: 2000, duration: 14, reach: 5000, conversionRate: 0.05, brandBoost: 5 },
+            local: { name: 'Local Advertising', cost: 3500, duration: 21, reach: 8000, conversionRate: 0.06, brandBoost: 8 },
+            influencer: { name: 'Influencer Partnership', cost: 5000, duration: 30, reach: 15000, conversionRate: 0.08, brandBoost: 12 },
+            event: { name: 'Special Event', cost: 4000, duration: 7, reach: 3000, conversionRate: 0.12, brandBoost: 10 }
+        };
+
+        // Supplier Data (Stage 4)
+        const SUPPLIER_DATA = [
+            { id: 'premium_produce', name: 'Farm Fresh Premium Produce', category: 'Produce', quality: 5, basePrice: 1.2, discount: 0, reliability: 98, description: 'Highest quality organic produce' },
+            { id: 'quality_meats', name: 'Quality Meats & Poultry', category: 'Meats', quality: 4, basePrice: 1.0, discount: 0, reliability: 95, description: 'Premium cuts and sustainable sourcing' },
+            { id: 'seafood_direct', name: 'Seafood Direct', category: 'Seafood', quality: 5, basePrice: 1.3, discount: 0, reliability: 92, description: 'Fresh daily catches from local waters' },
+            { id: 'wholesale_foods', name: 'Metro Wholesale Foods', category: 'Dry Goods', quality: 3, basePrice: 0.8, discount: 0, reliability: 100, description: 'Bulk pricing on pantry staples' }
+        ];
+
+        // Revenue Stream Options (Stage 4)
+        const REVENUE_STREAMS = {
+            catering: { name: 'Catering Division', investment: 15000, monthlyRevenue: 8000, monthlyExpense: 3000 },
+            ghostKitchen: { name: 'Ghost Kitchen', investment: 25000, monthlyRevenue: 12000, monthlyExpense: 5000 },
+            mealKits: { name: 'Meal Kit Service', investment: 20000, monthlyRevenue: 10000, monthlyExpense: 4000 },
+            cookingClasses: { name: 'Cooking Classes', investment: 10000, monthlyRevenue: 6000, monthlyExpense: 2000 }
+        };
+
+        // Seasons (Stage 4)
+        const SEASONS = ['Spring', 'Summer', 'Fall', 'Winter'];
+        const SEASON_ICONS = { 'Spring': '🌸', 'Summer': '☀️', 'Fall': '🍂', 'Winter': '❄️' };
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+        
+        function init() {
+            loadGame();
+            renderAll();
+        }
+
+        // ========================================
+        // TAB SWITCHING
+        // ========================================
+        
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            document.querySelectorAll('.tabs .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Activate selected tab
+            event.target.classList.add('active');
+            
+            // Render appropriate content
+            if (tabName === 'empire') renderEmpireDashboard();
+            if (tabName === 'locations') renderLocations();
+            if (tabName === 'menu') renderMenuItems();
+            if (tabName === 'recipes') renderRecipeBuilder();
+            if (tabName === 'analytics') renderAnalytics();
+        }
+
+        function switchLocationTab(tabName) {
+            // Hide all location tab contents
+            document.querySelectorAll('#locationDetails .tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all location tabs
+            document.querySelectorAll('#locationDetails .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById('loc-' + tabName + '-tab').classList.add('active');
+            
+            // Activate selected tab
+            event.target.classList.add('active');
+            
+            // Render appropriate content
+            if (gameState.selectedLocation !== null) {
+                const location = gameState.locations[gameState.selectedLocation];
+                if (tabName === 'overview') renderLocationOverview(location);
+                if (tabName === 'marketing') renderMarketing(location);
+                if (tabName === 'suppliers') renderSuppliers(location);
+                if (tabName === 'revenue') renderRevenue(location);
+                if (tabName === 'seasonal') renderSeasonal(location);
+            }
+        }
+
+        // ========================================
+        // RENDERING FUNCTIONS
+        // ========================================
+        
+        function renderAll() {
+            updateHeader();
+            renderEmpireDashboard();
+            renderLocations();
+            renderMenuItems();
+            renderRecipeBuilder();
+            renderAnalytics();
+        }
+
+        function updateHeader() {
+            document.getElementById('headerCash').textContent = formatCurrency(gameState.cash);
+            document.getElementById('headerCash').className = gameState.cash >= 0 ? 'stat-value' : 'stat-value negative';
+            document.getElementById('headerLocations').textContent = gameState.locations.length;
+            
+            const monthlyProfit = calculateTotalMonthlyProfit();
+            document.getElementById('headerProfit').textContent = formatCurrency(monthlyProfit);
+            document.getElementById('headerProfit').className = monthlyProfit >= 0 ? 'stat-value positive' : 'stat-value negative';
+        }
+
+        function renderEmpireDashboard() {
+            const monthlyRevenue = calculateTotalMonthlyRevenue();
+            const monthlyExpenses = calculateTotalMonthlyExpenses();
+            const monthlyProfit = monthlyRevenue - monthlyExpenses;
+            
+            document.getElementById('empireCash').textContent = formatCurrency(gameState.cash);
+            document.getElementById('empireRevenue').textContent = formatCurrency(monthlyRevenue);
+            document.getElementById('empireExpenses').textContent = formatCurrency(monthlyExpenses);
+            document.getElementById('empireProfit').textContent = formatCurrency(monthlyProfit);
+            document.getElementById('empireProfit').className = monthlyProfit >= 0 ? 'metric-value success' : 'metric-value danger';
+            
+            document.getElementById('totalLocations').textContent = gameState.locations.length;
+            document.getElementById('avgRating').textContent = calculateAverageRating().toFixed(1) + ' ⭐';
+            document.getElementById('totalCustomers').textContent = calculateTotalCustomers();
+            document.getElementById('totalMenuItems').textContent = gameState.menuItems.length;
+            
+            const avgFoodCost = calculateAverageFoodCost();
+            const avgMargin = calculateAverageMargin();
+            const avgBrand = calculateAverageBrand();
+            
+            document.getElementById('avgFoodCost').textContent = avgFoodCost.toFixed(1) + '%';
+            document.getElementById('avgFoodCost').className = avgFoodCost <= 32 ? 'metric-value success' : (avgFoodCost <= 35 ? 'metric-value warning' : 'metric-value danger');
+            
+            document.getElementById('avgMargin').textContent = avgMargin.toFixed(1) + '%';
+            document.getElementById('avgMargin').className = avgMargin >= 60 ? 'metric-value success' : 'metric-value warning';
+            
+            document.getElementById('empireBrand').textContent = avgBrand.toFixed(0) + '%';
+            
+            // Render locations list
+            const locationsList = document.getElementById('empireLocationsList');
+            if (gameState.locations.length === 0) {
+                locationsList.innerHTML = `
+                    <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                        No locations yet. Go to the Locations tab to open your first restaurant!
+                    </p>
+                `;
+            } else {
+                locationsList.innerHTML = gameState.locations.map((loc, index) => `
+                    <div class="location-card" onclick="selectLocationFromEmpire(${index})">
+                        <div class="location-header">
+                            <div class="location-name">
+                                <span class="location-flag">${loc.flag}</span>
+                                ${loc.name}
+                            </div>
+                            <span class="metric-value ${loc.monthlyProfit >= 0 ? 'success' : 'danger'}">
+                                ${formatCurrency(loc.monthlyProfit)}/mo
+                            </span>
+                        </div>
+                        <div class="location-stats">
+                            <div class="location-stat">
+                                <div class="location-stat-label">Rating</div>
+                                <div class="location-stat-value">${loc.rating.toFixed(1)} ⭐</div>
+                            </div>
+                            <div class="location-stat">
+                                <div class="location-stat-label">Customers</div>
+                                <div class="location-stat-value">${loc.dailyCustomers}/day</div>
+                            </div>
+                            <div class="location-stat">
+                                <div class="location-stat-label">Brand</div>
+                                <div class="location-stat-value">${loc.brandAwareness}%</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function renderLocations() {
+            const locationsList = document.getElementById('locationsList');
+            
+            if (gameState.locations.length === 0) {
+                locationsList.innerHTML = `
+                    <div class="alert alert-info">
+                        <strong>🌍 Ready to Start Your Empire?</strong><br>
+                        Select a location below to open your first restaurant. Choose between building new or acquiring an existing restaurant.
+                    </div>
+                `;
+            } else {
+                locationsList.innerHTML = gameState.locations.map((loc, index) => `
+                    <div class="location-card ${gameState.selectedLocation === index ? 'selected' : ''}" onclick="selectLocation(${index})">
+                        <div class="location-header">
+                            <div class="location-name">
+                                <span class="location-flag">${loc.flag}</span>
+                                ${loc.name}, ${loc.country}
+                            </div>
+                            <div>
+                                <span class="metric-value">${loc.rating.toFixed(1)} ⭐</span>
+                            </div>
+                        </div>
+                        <div class="location-stats">
+                            <div class="location-stat">
+                                <div class="location-stat-label">Revenue</div>
+                                <div class="location-stat-value success">${formatCurrency(loc.monthlyRevenue)}</div>
+                            </div>
+                            <div class="location-stat">
+                                <div class="location-stat-label">Profit</div>
+                                <div class="location-stat-value ${loc.monthlyProfit >= 0 ? 'success' : 'danger'}">
+                                    ${formatCurrency(loc.monthlyProfit)}
+                                </div>
+                            </div>
+                            <div class="location-stat">
+                                <div class="location-stat-label">Customers</div>
+                                <div class="location-stat-value">${loc.dailyCustomers}/day</div>
+                            </div>
+                            <div class="location-stat">
+                                <div class="location-stat-label">Brand</div>
+                                <div class="location-stat-value">${loc.brandAwareness}%</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Show/hide location details
+            if (gameState.selectedLocation !== null) {
+                document.getElementById('locationDetails').style.display = 'block';
+                const location = gameState.locations[gameState.selectedLocation];
+                document.getElementById('selectedLocationName').textContent = `${location.flag} ${location.name}`;
+                renderLocationOverview(location);
+            } else {
+                document.getElementById('locationDetails').style.display = 'none';
+            }
+        }
+
+        function renderLocationOverview(location) {
+            document.getElementById('locFinancials').innerHTML = `
+                <div class="metric-row">
+                    <span class="metric-label">Monthly Revenue</span>
+                    <span class="metric-value success">${formatCurrency(location.monthlyRevenue)}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Monthly Expenses</span>
+                    <span class="metric-value danger">${formatCurrency(location.monthlyExpenses)}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Net Profit</span>
+                    <span class="metric-value ${location.monthlyProfit >= 0 ? 'success' : 'danger'}">
+                        ${formatCurrency(location.monthlyProfit)}
+                    </span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Profit Margin</span>
+                    <span class="metric-value">${location.profitMargin.toFixed(1)}%</span>
+                </div>
+            `;
+            
+            document.getElementById('locOperations').innerHTML = `
+                <div class="metric-row">
+                    <span class="metric-label">Daily Customers</span>
+                    <span class="metric-value">${location.dailyCustomers}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Avg Check Size</span>
+                    <span class="metric-value">${formatCurrency(location.avgCheck)}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Rating</span>
+                    <span class="metric-value">${location.rating.toFixed(1)} ⭐</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Current Season</span>
+                    <span class="metric-value">${SEASON_ICONS[location.season]} ${location.season}</span>
+                </div>
+            `;
+        }
+
+        function renderMarketing(location) {
+            let html = `
+                <h3 style="color: var(--gold); margin-bottom: 1rem;">Marketing Campaigns</h3>
+                <div class="metric-row" style="margin-bottom: 1rem;">
+                    <span class="metric-label">Brand Awareness</span>
+                    <span class="metric-value">${location.brandAwareness}%</span>
+                </div>
+                <div class="progress-bar" style="margin-bottom: 2rem;">
+                    <div class="progress-fill" style="width: ${location.brandAwareness}%"></div>
+                </div>
+            `;
+            
+            // Active campaigns
+            if (location.campaigns.length > 0) {
+                html += '<h4 style="color: var(--text-secondary); margin-bottom: 0.5rem;">Active Campaigns</h4>';
+                location.campaigns.forEach((campaign, index) => {
+                    const daysLeft = campaign.daysLeft;
+                    const progress = ((campaign.duration - daysLeft) / campaign.duration) * 100;
+                    html += `
+                        <div class="campaign-card">
+                            <div class="campaign-header">
+                                <span class="campaign-name">${campaign.name}</span>
+                                <span class="status-badge status-active">Active</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Days Remaining</span>
+                                <span class="metric-value">${daysLeft}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Reach</span>
+                                <span class="metric-value">${campaign.reach.toLocaleString()} people</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Available campaigns
+            html += '<h4 style="color: var(--text-secondary); margin: 1.5rem 0 0.5rem;">Launch New Campaign</h4>';
+            Object.keys(CAMPAIGN_TYPES).forEach(key => {
+                const camp = CAMPAIGN_TYPES[key];
+                html += `
+                    <div class="campaign-card">
+                        <div class="campaign-header">
+                            <span class="campaign-name">${camp.name}</span>
+                            <span class="metric-value">${formatCurrency(camp.cost)}</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Duration</span>
+                            <span class="metric-value">${camp.duration} days</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Reach</span>
+                            <span class="metric-value">${camp.reach.toLocaleString()} people</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Brand Boost</span>
+                            <span class="metric-value success">+${camp.brandBoost}%</span>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 0.5rem; width: 100%;" 
+                                onclick="launchCampaign(${gameState.selectedLocation}, '${key}')"
+                                ${gameState.cash < camp.cost ? 'disabled' : ''}>
+                            Launch Campaign
+                        </button>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('marketingContent').innerHTML = html;
+        }
+
+        function renderSuppliers(location) {
+            let html = `
+                <h3 style="color: var(--gold); margin-bottom: 1rem;">Supplier Management</h3>
+                <div class="alert alert-info" style="margin-bottom: 1rem;">
+                    <strong>💡 Tip:</strong> Negotiate contracts with suppliers to reduce ingredient costs and improve quality.
+                </div>
+            `;
+            
+            SUPPLIER_DATA.forEach(supplier => {
+                const hasContract = location.supplierContracts[supplier.id];
+                html += `
+                    <div class="supplier-card">
+                        <div class="supplier-header">
+                            <div>
+                                <div class="supplier-name">${supplier.name}</div>
+                                <div style="color: var(--text-secondary); font-size: 0.85rem;">${supplier.category}</div>
+                            </div>
+                            <span class="status-badge ${hasContract ? 'status-active' : 'status-inactive'}">
+                                ${hasContract ? 'Active Contract' : 'Available'}
+                            </span>
+                        </div>
+                        <div style="color: var(--text-secondary); margin: 0.5rem 0;">${supplier.description}</div>
+                        <div class="metric-row">
+                            <span class="metric-label">Quality</span>
+                            <span class="metric-value">${'⭐'.repeat(supplier.quality)}</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Price Multiplier</span>
+                            <span class="metric-value">${supplier.basePrice}x</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Reliability</span>
+                            <span class="metric-value">${supplier.reliability}%</span>
+                        </div>
+                        ${hasContract ? `
+                            <div class="metric-row">
+                                <span class="metric-label">Your Discount</span>
+                                <span class="metric-value success">-${hasContract.discount}%</span>
+                            </div>
+                            <button class="btn btn-danger" style="margin-top: 0.5rem; width: 100%;" 
+                                    onclick="cancelSupplierContract(${gameState.selectedLocation}, '${supplier.id}')">
+                                Cancel Contract
+                            </button>
+                        ` : `
+                            <button class="btn btn-primary" style="margin-top: 0.5rem; width: 100%;" 
+                                    onclick="negotiateSupplier(${gameState.selectedLocation}, '${supplier.id}')">
+                                Negotiate Contract
+                            </button>
+                        `}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('suppliersContent').innerHTML = html;
+        }
+
+        function renderRevenue(location) {
+            let html = `
+                <h3 style="color: var(--gold); margin-bottom: 1rem;">Alternative Revenue Streams</h3>
+                <div class="alert alert-info" style="margin-bottom: 1rem;">
+                    <strong>💡 Strategy:</strong> Diversify revenue sources to reduce dependency on dine-in service and increase profitability.
+                </div>
+            `;
+            
+            Object.keys(REVENUE_STREAMS).forEach(key => {
+                const stream = REVENUE_STREAMS[key];
+                const isActive = location.revenueStreams[key];
+                
+                html += `
+                    <div class="revenue-card">
+                        <div class="revenue-header">
+                            <div class="revenue-name">${stream.name}</div>
+                            <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
+                                ${isActive ? 'Active' : 'Not Started'}
+                            </span>
+                        </div>
+                        ${!isActive ? `
+                            <div class="metric-row">
+                                <span class="metric-label">Initial Investment</span>
+                                <span class="metric-value danger">${formatCurrency(stream.investment)}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Est. Monthly Revenue</span>
+                                <span class="metric-value success">${formatCurrency(stream.monthlyRevenue)}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Est. Monthly Expense</span>
+                                <span class="metric-value danger">${formatCurrency(stream.monthlyExpense)}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Est. Monthly Profit</span>
+                                <span class="metric-value success">${formatCurrency(stream.monthlyRevenue - stream.monthlyExpense)}</span>
+                            </div>
+                            <button class="btn btn-primary" style="margin-top: 0.5rem; width: 100%;" 
+                                    onclick="launchRevenueStream(${gameState.selectedLocation}, '${key}')"
+                                    ${gameState.cash < stream.investment ? 'disabled' : ''}>
+                                Launch ${formatCurrency(stream.investment)}
+                            </button>
+                        ` : `
+                            <div class="metric-row">
+                                <span class="metric-label">Monthly Revenue</span>
+                                <span class="metric-value success">${formatCurrency(stream.monthlyRevenue)}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Monthly Expense</span>
+                                <span class="metric-value danger">${formatCurrency(stream.monthlyExpense)}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Monthly Profit</span>
+                                <span class="metric-value success">${formatCurrency(stream.monthlyRevenue - stream.monthlyExpense)}</span>
+                            </div>
+                            <button class="btn btn-danger" style="margin-top: 0.5rem; width: 100%;" 
+                                    onclick="closeRevenueStream(${gameState.selectedLocation}, '${key}')">
+                                Close Stream
+                            </button>
+                        `}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('revenueContent').innerHTML = html;
+        }
+
+        function renderSeasonal(location) {
+            const html = `
+                <h3 style="color: var(--gold); margin-bottom: 1rem;">Seasonal Dynamics</h3>
+                
+                <div class="card" style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-size: 2rem;">${SEASON_ICONS[location.season]}</div>
+                            <div style="color: var(--gold); font-weight: 700; margin-top: 0.5rem;">${location.season}</div>
+                        </div>
+                        <div>
+                            <div class="metric-label">Season Multiplier</div>
+                            <div class="metric-value ${location.seasonMultiplier >= 1 ? 'success' : 'warning'}">
+                                ${location.seasonMultiplier.toFixed(2)}x
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-row">
+                        <span class="metric-label">Customer Traffic Impact</span>
+                        <span class="metric-value ${location.seasonMultiplier >= 1 ? 'success' : 'warning'}">
+                            ${location.seasonMultiplier >= 1 ? '+' : ''}${((location.seasonMultiplier - 1) * 100).toFixed(0)}%
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <strong>🌦️ Seasonal Effects:</strong><br>
+                    • Spring: Normal traffic (1.0x)<br>
+                    • Summer: Increased tourism (+20%)<br>
+                    • Fall: Peak dining season (+10%)<br>
+                    • Winter: Reduced traffic (-15%)
+                </div>
+                
+                <button class="btn btn-secondary" onclick="advanceSeason(${gameState.selectedLocation})" style="width: 100%; margin-top: 1rem;">
+                    ⏩ Advance to Next Season
+                </button>
+            `;
+            
+            document.getElementById('seasonalContent').innerHTML = html;
+        }
+
+        function renderMenuItems() {
+            const menuList = document.getElementById('menuItemsList');
+            
+            if (gameState.menuItems.length === 0) {
+                menuList.innerHTML = `
+                    <div class="alert alert-info">
+                        <strong>📋 No Menu Items Yet</strong><br>
+                        Go to the Recipe Builder to create your first menu item with professional ingredient costing.
+                    </div>
+                `;
+            } else {
+                menuList.innerHTML = gameState.menuItems.map((item, index) => {
+                    const foodCostPct = (item.ingredientCost / item.price) * 100;
+                    const profitMargin = ((item.price - item.ingredientCost) / item.price) * 100;
+                    
+                    let costClass = 'food-cost-excellent';
+                    if (foodCostPct > 32) costClass = 'food-cost-good';
+                    if (foodCostPct > 35) costClass = 'food-cost-fair';
+                    if (foodCostPct > 40) costClass = 'food-cost-poor';
+                    
+                    return `
+                        <div class="menu-item-card">
+                            <div class="menu-item-header">
+                                <div class="menu-item-name">${item.name}</div>
+                                <span class="food-cost-badge ${costClass}">${foodCostPct.toFixed(1)}% Food Cost</span>
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                ${item.category} • ${item.description}
+                            </div>
+                            <div class="grid-3">
+                                <div>
+                                    <div class="metric-label">Menu Price</div>
+                                    <div class="metric-value">${formatCurrency(item.price)}</div>
+                                </div>
+                                <div>
+                                    <div class="metric-label">Ingredient Cost</div>
+                                    <div class="metric-value danger">${formatCurrency(item.ingredientCost)}</div>
+                                </div>
+                                <div>
+                                    <div class="metric-label">Profit/Dish</div>
+                                    <div class="metric-value success">${formatCurrency(item.price - item.ingredientCost)}</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 0.75rem;">
+                                <div class="metric-label">Ingredients (${item.ingredients.length})</div>
+                                <div style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">
+                                    ${item.ingredients.map(ing => `${ing.name} (${ing.quantity} ${ing.unit})`).join(', ')}
+                                </div>
+                            </div>
+                            <button class="btn btn-danger" style="margin-top: 1rem;" onclick="deleteMenuItem(${index})">
+                                🗑️ Delete Item
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function renderRecipeBuilder() {
+            updateRecipeCostAnalysis();
+            renderRecipeIngredients();
+        }
+
+        function updateRecipeCostAnalysis() {
+            const totalCost = gameState.currentRecipe.ingredients.reduce((sum, ing) => sum + ing.totalCost, 0);
+            const price = parseFloat(document.getElementById('recipePrice').value) || 0;
+            const foodCost = price > 0 ? (totalCost / price) * 100 : 0;
+            const profit = price - totalCost;
+            const margin = price > 0 ? (profit / price) * 100 : 0;
+            
+            document.getElementById('totalIngredientCost').textContent = formatCurrency(totalCost);
+            document.getElementById('displayMenuPrice').textContent = formatCurrency(price);
+            document.getElementById('displayFoodCost').textContent = foodCost.toFixed(1) + '%';
+            document.getElementById('displayFoodCost').className = foodCost <= 32 ? 'metric-value success' : (foodCost <= 35 ? 'metric-value warning' : 'metric-value danger');
+            document.getElementById('displayProfit').textContent = formatCurrency(profit);
+            document.getElementById('displayMargin').textContent = margin.toFixed(1) + '%';
+        }
+
+        function renderRecipeIngredients() {
+            const list = document.getElementById('recipeIngredientsList');
+            
+            if (gameState.currentRecipe.ingredients.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 1rem;">No ingredients added yet</p>';
+            } else {
+                list.innerHTML = gameState.currentRecipe.ingredients.map((ing, index) => `
+                    <div class="ingredient-item">
+                        <div class="ingredient-info">
+                            <div class="ingredient-name">${ing.name}</div>
+                            <div class="ingredient-details">
+                                ${ing.quantity} ${ing.unit} × ${formatCurrency(ing.costPerUnit)} = ${formatCurrency(ing.totalCost)}
+                            </div>
+                        </div>
+                        <button class="btn btn-danger" onclick="removeIngredientFromRecipe(${index})">Remove</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function renderAnalytics() {
+            // Top performing locations
+            const sortedLocations = [...gameState.locations].sort((a, b) => b.monthlyProfit - a.monthlyProfit);
+            document.getElementById('topLocations').innerHTML = sortedLocations.slice(0, 5).map(loc => `
+                <div class="metric-row">
+                    <span class="metric-label">${loc.flag} ${loc.name}</span>
+                    <span class="metric-value success">${formatCurrency(loc.monthlyProfit)}/mo</span>
+                </div>
+            `).join('') || '<p style="color: var(--text-secondary);">No locations yet</p>';
+            
+            // Top menu items
+            const sortedMenu = [...gameState.menuItems].sort((a, b) => 
+                ((b.price - b.ingredientCost) / b.price) - ((a.price - a.ingredientCost) / a.price)
+            );
+            document.getElementById('topMenuItems').innerHTML = sortedMenu.slice(0, 5).map(item => `
+                <div class="metric-row">
+                    <span class="metric-label">${item.name}</span>
+                    <span class="metric-value success">${(((item.price - item.ingredientCost) / item.price) * 100).toFixed(1)}% margin</span>
+                </div>
+            `).join('') || '<p style="color: var(--text-secondary);">No menu items yet</p>';
+            
+            // Revenue breakdown
+            let totalDineIn = 0;
+            let totalRevenue = 0;
+            let revenueStreams = { catering: 0, ghostKitchen: 0, mealKits: 0, cookingClasses: 0 };
+            
+            gameState.locations.forEach(loc => {
+                totalDineIn += loc.monthlyRevenue;
+                totalRevenue += loc.monthlyRevenue;
+                
+                Object.keys(loc.revenueStreams).forEach(key => {
+                    if (loc.revenueStreams[key]) {
+                        const stream = REVENUE_STREAMS[key];
+                        revenueStreams[key] += stream.monthlyRevenue;
+                        totalRevenue += stream.monthlyRevenue;
+                    }
+                });
+            });
+            
+            const breakdown = [
+                { label: 'Dine-In Service', value: totalDineIn },
+                { label: 'Catering', value: revenueStreams.catering },
+                { label: 'Ghost Kitchen', value: revenueStreams.ghostKitchen },
+                { label: 'Meal Kits', value: revenueStreams.mealKits },
+                { label: 'Cooking Classes', value: revenueStreams.cookingClasses }
+            ].filter(item => item.value > 0);
+            
+            document.getElementById('revenueBreakdown').innerHTML = breakdown.map(item => `
+                <div class="metric-row">
+                    <span class="metric-label">${item.label}</span>
+                    <span class="metric-value">${formatCurrency(item.value)} (${((item.value / totalRevenue) * 100).toFixed(1)}%)</span>
+                </div>
+            `).join('') || '<p style="color: var(--text-secondary);">No revenue yet</p>';
+        }
+
+        // ========================================
+        // LOCATION MANAGEMENT
+        // ========================================
+        
+        function openLocationModal() {
+            document.getElementById('locationModal').classList.add('active');
+            renderGlobalLocations();
+        }
+
+        function closeLocationModal() {
+            document.getElementById('locationModal').classList.remove('active');
+        }
+
+        function renderGlobalLocations() {
+            const strategy = document.getElementById('openingStrategy').value;
+            const list = document.getElementById('globalLocationsList');
+            
+            list.innerHTML = LOCATIONS.filter(loc => {
+                // Filter out locations already owned
+                return !gameState.locations.some(owned => owned.id === loc.id);
+            }).map(loc => {
+                const cost = strategy === 'new' ? loc.newBuildCost : loc.acquisitionCost;
+                const canAfford = gameState.cash >= cost;
+                
+                return `
+                    <div class="card" style="cursor: ${canAfford ? 'pointer' : 'not-allowed'}; opacity: ${canAfford ? '1' : '0.6'};" 
+                         onclick="${canAfford ? `openNewLocation(${loc.id}, '${strategy}')` : ''}">
+                        <div style="font-size: 2rem; text-align: center;">${loc.flag}</div>
+                        <div style="text-align: center; font-weight: 700; color: var(--gold); margin: 0.5rem 0;">
+                            ${loc.name}
+                        </div>
+                        <div style="text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                            ${loc.country}
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Traffic</span>
+                            <span class="metric-value">${loc.traffic}</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Avg Check</span>
+                            <span class="metric-value">${formatCurrency(loc.avgCheck)}</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Monthly Rent</span>
+                            <span class="metric-value danger">${formatCurrency(loc.rentMonthly)}</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">${strategy === 'new' ? 'Build Cost' : 'Acquisition'}</span>
+                            <span class="metric-value ${canAfford ? 'warning' : 'danger'}">${formatCurrency(cost)}</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Market Size</span>
+                            <span class="metric-value">${loc.marketSize}/100</span>
+                        </div>
+                        ${!canAfford ? '<div style="color: var(--coral); text-align: center; margin-top: 0.5rem; font-size: 0.85rem;">Insufficient funds</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateLocationCosts() {
+            renderGlobalLocations();
+        }
+
+        function openNewLocation(locationId, strategy) {
+            const locData = LOCATIONS.find(l => l.id === locationId);
+            const cost = strategy === 'new' ? locData.newBuildCost : locData.acquisitionCost;
+            
+            if (gameState.cash < cost) {
+                alert('Insufficient funds!');
+                return;
+            }
+            
+            // Deduct cost
+            gameState.cash -= cost;
+            
+            // Create new location
+            const newLocation = {
+                id: locData.id,
+                name: locData.name,
+                country: locData.country,
+                flag: locData.flag,
+                traffic: locData.traffic,
+                rentMonthly: locData.rentMonthly,
+                avgCheck: locData.avgCheck,
+                marketSize: locData.marketSize,
+                strategy: strategy,
+                
+                // Financial
+                monthlyRevenue: 0,
+                monthlyExpenses: locData.rentMonthly,
+                monthlyProfit: -locData.rentMonthly,
+                profitMargin: 0,
+                
+                // Operations
+                dailyCustomers: 50,
+                rating: 3.5,
+                
+                // Stage 4 features
+                brandAwareness: 10,
+                campaigns: [],
+                supplierContracts: {},
+                revenueStreams: {
+                    catering: false,
+                    ghostKitchen: false,
+                    mealKits: false,
+                    cookingClasses: false
+                },
+                season: SEASONS[0],
+                seasonMultiplier: 1.0
+            };
+            
+            // Calculate initial revenue based on traffic
+            const trafficMultiplier = {
+                'Very High': 2.0,
+                'High': 1.5,
+                'Medium': 1.0
+            }[locData.traffic] || 1.0;
+            
+            newLocation.dailyCustomers = Math.floor(50 * trafficMultiplier);
+            newLocation.monthlyRevenue = newLocation.dailyCustomers * locData.avgCheck * 30;
+            newLocation.monthlyProfit = newLocation.monthlyRevenue - newLocation.monthlyExpenses;
+            newLocation.profitMargin = (newLocation.monthlyProfit / newLocation.monthlyRevenue) * 100;
+            
+            gameState.locations.push(newLocation);
+            
+            closeLocationModal();
+            saveGame();
+            renderAll();
+            
+            alert(`🎉 Congratulations! You've opened a new location in ${locData.name}!`);
+        }
+
+        function selectLocation(index) {
+            gameState.selectedLocation = index;
+            renderLocations();
+        }
+
+        function selectLocationFromEmpire(index) {
+            gameState.selectedLocation = index;
+            switchTab('locations');
+        }
+
+        // ========================================
+        // MARKETING FUNCTIONS (Stage 4)
+        // ========================================
+        
+        function launchCampaign(locationIndex, campaignType) {
+            const location = gameState.locations[locationIndex];
+            const campaign = CAMPAIGN_TYPES[campaignType];
+            
+            if (gameState.cash < campaign.cost) {
+                alert('Insufficient funds!');
+                return;
+            }
+            
+            gameState.cash -= campaign.cost;
+            
+            location.campaigns.push({
+                type: campaignType,
+                name: campaign.name,
+                duration: campaign.duration,
+                daysLeft: campaign.duration,
+                reach: campaign.reach,
+                brandBoost: campaign.brandBoost
+            });
+            
+            saveGame();
+            renderMarketing(location);
+            updateHeader();
+            
+            alert(`🎯 Campaign "${campaign.name}" launched successfully!`);
+        }
+
+        // ========================================
+        // SUPPLIER FUNCTIONS (Stage 4)
+        // ========================================
+        
+        function negotiateSupplier(locationIndex, supplierId) {
+            const location = gameState.locations[locationIndex];
+            const supplier = SUPPLIER_DATA.find(s => s.id === supplierId);
+            
+            // Simple negotiation - give 10% discount
+            const discount = 10;
+            
+            location.supplierContracts[supplierId] = {
+                supplierId: supplierId,
+                discount: discount,
+                quality: supplier.quality
+            };
+            
+            saveGame();
+            renderSuppliers(location);
+            
+            alert(`✅ Contract signed with ${supplier.name}! You've secured a ${discount}% discount.`);
+        }
+
+        function cancelSupplierContract(locationIndex, supplierId) {
+            const location = gameState.locations[locationIndex];
+            delete location.supplierContracts[supplierId];
+            
+            saveGame();
+            renderSuppliers(location);
+            
+            alert('Contract cancelled.');
+        }
+
+        // ========================================
+        // REVENUE STREAM FUNCTIONS (Stage 4)
+        // ========================================
+        
+        function launchRevenueStream(locationIndex, streamKey) {
+            const location = gameState.locations[locationIndex];
+            const stream = REVENUE_STREAMS[streamKey];
+            
+            if (gameState.cash < stream.investment) {
+                alert('Insufficient funds!');
+                return;
+            }
+            
+            gameState.cash -= stream.investment;
+            location.revenueStreams[streamKey] = true;
+            
+            // Update location financials
+            location.monthlyRevenue += stream.monthlyRevenue;
+            location.monthlyExpenses += stream.monthlyExpense;
+            location.monthlyProfit = location.monthlyRevenue - location.monthlyExpenses;
+            location.profitMargin = (location.monthlyProfit / location.monthlyRevenue) * 100;
+            
+            saveGame();
+            renderRevenue(location);
+            updateHeader();
+            
+            alert(`🚀 ${stream.name} launched successfully!`);
+        }
+
+        function closeRevenueStream(locationIndex, streamKey) {
+            const location = gameState.locations[locationIndex];
+            const stream = REVENUE_STREAMS[streamKey];
+            
+            location.revenueStreams[streamKey] = false;
+            
+            // Update location financials
+            location.monthlyRevenue -= stream.monthlyRevenue;
+            location.monthlyExpenses -= stream.monthlyExpense;
+            location.monthlyProfit = location.monthlyRevenue - location.monthlyExpenses;
+            location.profitMargin = (location.monthlyProfit / location.monthlyRevenue) * 100;
+            
+            saveGame();
+            renderRevenue(location);
+            updateHeader();
+            
+            alert(`${stream.name} closed.`);
+        }
+
+        // ========================================
+        // SEASONAL FUNCTIONS (Stage 4)
+        // ========================================
+        
+        function advanceSeason(locationIndex) {
+            const location = gameState.locations[locationIndex];
+            const currentIndex = SEASONS.indexOf(location.season);
+            const nextIndex = (currentIndex + 1) % SEASONS.length;
+            location.season = SEASONS[nextIndex];
+            
+            // Set season multiplier
+            const multipliers = {
+                'Spring': 1.0,
+                'Summer': 1.2,
+                'Fall': 1.1,
+                'Winter': 0.85
+            };
+            location.seasonMultiplier = multipliers[location.season];
+            
+            // Adjust customers
+            const baseCustomers = location.dailyCustomers / (location.seasonMultiplier || 1.0);
+            location.dailyCustomers = Math.floor(baseCustomers * location.seasonMultiplier);
+            
+            // Recalculate revenue
+            location.monthlyRevenue = location.dailyCustomers * location.avgCheck * 30;
+            
+            // Add revenue streams
+            Object.keys(location.revenueStreams).forEach(key => {
+                if (location.revenueStreams[key]) {
+                    location.monthlyRevenue += REVENUE_STREAMS[key].monthlyRevenue;
+                }
+            });
+            
+            location.monthlyProfit = location.monthlyRevenue - location.monthlyExpenses;
+            location.profitMargin = (location.monthlyProfit / location.monthlyRevenue) * 100;
+            
+            saveGame();
+            renderSeasonal(location);
+            renderLocationOverview(location);
+            updateHeader();
+            
+            alert(`🌦️ Season changed to ${location.season}. Customer traffic adjusted to ${location.dailyCustomers}/day.`);
+        }
+
+        // ========================================
+        // MENU/RECIPE FUNCTIONS (Stage 6)
+        // ========================================
+        
+        function openIngredientModal() {
+            document.getElementById('ingredientModal').classList.add('active');
+            filterIngredients();
+        }
+
+        function closeIngredientModal() {
+            document.getElementById('ingredientModal').classList.remove('active');
+        }
+
+        function filterIngredients() {
+            const search = document.getElementById('ingredientSearch').value.toLowerCase();
+            const category = document.getElementById('ingredientCategoryFilter').value;
+            
+            const filtered = INGREDIENT_DATABASE.filter(ing => {
+                const matchesSearch = ing.name.toLowerCase().includes(search);
+                const matchesCategory = !category || ing.category === category;
+                return matchesSearch && matchesCategory;
+            });
+            
+            const list = document.getElementById('availableIngredients');
+            list.innerHTML = filtered.map(ing => `
+                <div class="ingredient-item">
+                    <div class="ingredient-info">
+                        <div class="ingredient-name">${ing.name}</div>
+                        <div class="ingredient-details">${ing.category} • ${formatCurrency(ing.costPerUnit)} per ${ing.unit}</div>
+                    </div>
+                    <div class="ingredient-actions">
+                        <input type="number" class="ingredient-quantity" id="qty-${ing.id}" 
+                               placeholder="Qty" min="0" step="0.1" value="1">
+                        <button class="btn btn-primary" onclick="addIngredientToRecipe(${ing.id})">Add</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addIngredientToRecipe(ingredientId) {
+            const ingredient = INGREDIENT_DATABASE.find(i => i.id === ingredientId);
+            const quantity = parseFloat(document.getElementById(`qty-${ingredientId}`).value) || 0;
+            
+            if (quantity <= 0) {
+                alert('Please enter a valid quantity');
+                return;
+            }
+            
+            const totalCost = quantity * ingredient.costPerUnit;
+            
+            gameState.currentRecipe.ingredients.push({
+                id: ingredient.id,
+                name: ingredient.name,
+                category: ingredient.category,
+                quantity: quantity,
+                unit: ingredient.unit,
+                costPerUnit: ingredient.costPerUnit,
+                totalCost: totalCost
+            });
+            
+            renderRecipeIngredients();
+            updateRecipeCostAnalysis();
+            closeIngredientModal();
+        }
+
+        function removeIngredientFromRecipe(index) {
+            gameState.currentRecipe.ingredients.splice(index, 1);
+            renderRecipeIngredients();
+            updateRecipeCostAnalysis();
+        }
+
+        function saveMenuItem() {
+            const name = document.getElementById('recipeName').value.trim();
+            const category = document.getElementById('recipeCategory').value;
+            const description = document.getElementById('recipeDescription').value.trim();
+            const price = parseFloat(document.getElementById('recipePrice').value) || 0;
+            
+            if (!name) {
+                alert('Please enter a dish name');
+                return;
+            }
+            
+            if (gameState.currentRecipe.ingredients.length === 0) {
+                alert('Please add at least one ingredient');
+                return;
+            }
+            
+            if (price <= 0) {
+                alert('Please enter a menu price');
+                return;
+            }
+            
+            const ingredientCost = gameState.currentRecipe.ingredients.reduce((sum, ing) => sum + ing.totalCost, 0);
+            
+            gameState.menuItems.push({
+                name: name,
+                category: category,
+                description: description,
+                price: price,
+                ingredientCost: ingredientCost,
+                ingredients: [...gameState.currentRecipe.ingredients]
+            });
+            
+            clearRecipe();
+            saveGame();
+            switchTab('menu');
+            
+            alert(`✅ Menu item "${name}" saved successfully!`);
+        }
+
+        function clearRecipe() {
+            document.getElementById('recipeName').value = '';
+            document.getElementById('recipeCategory').value = 'entree';
+            document.getElementById('recipeDescription').value = '';
+            document.getElementById('recipePrice').value = '';
+            gameState.currentRecipe.ingredients = [];
+            renderRecipeIngredients();
+            updateRecipeCostAnalysis();
+        }
+
+        function deleteMenuItem(index) {
+            if (confirm('Are you sure you want to delete this menu item?')) {
+                gameState.menuItems.splice(index, 1);
+                saveGame();
+                renderMenuItems();
+            }
+        }
+
+        // ========================================
+        // CALCULATION FUNCTIONS
+        // ========================================
+        
+        function calculateTotalMonthlyRevenue() {
+            let total = 0;
+            gameState.locations.forEach(loc => {
+                total += loc.monthlyRevenue;
+            });
+            return total;
+        }
+
+        function calculateTotalMonthlyExpenses() {
+            let total = 0;
+            gameState.locations.forEach(loc => {
+                total += loc.monthlyExpenses;
+            });
+            return total;
+        }
+
+        function calculateTotalMonthlyProfit() {
+            return calculateTotalMonthlyRevenue() - calculateTotalMonthlyExpenses();
+        }
+
+        function calculateAverageRating() {
+            if (gameState.locations.length === 0) return 0;
+            const sum = gameState.locations.reduce((acc, loc) => acc + loc.rating, 0);
+            return sum / gameState.locations.length;
+        }
+
+        function calculateTotalCustomers() {
+            return gameState.locations.reduce((acc, loc) => acc + loc.dailyCustomers, 0);
+        }
+
+        function calculateAverageFoodCost() {
+            if (gameState.menuItems.length === 0) return 0;
+            const sum = gameState.menuItems.reduce((acc, item) => {
+                return acc + ((item.ingredientCost / item.price) * 100);
+            }, 0);
+            return sum / gameState.menuItems.length;
+        }
+
+        function calculateAverageMargin() {
+            if (gameState.menuItems.length === 0) return 0;
+            const sum = gameState.menuItems.reduce((acc, item) => {
+                return acc + (((item.price - item.ingredientCost) / item.price) * 100);
+            }, 0);
+            return sum / gameState.menuItems.length;
+        }
+
+        function calculateAverageBrand() {
+            if (gameState.locations.length === 0) return 10;
+            const sum = gameState.locations.reduce((acc, loc) => acc + loc.brandAwareness, 0);
+            return sum / gameState.locations.length;
+        }
+
+        // ========================================
+        // SAVE/LOAD FUNCTIONS
+        // ========================================
+        
+        function saveGame() {
+            try {
+                localStorage.setItem('restaurantEmpireUltimate', JSON.stringify(gameState));
+                console.log('Game saved successfully');
+            } catch (error) {
+                console.error('Failed to save game:', error);
+            }
+        }
+
+        function loadGame() {
+            try {
+                const saved = localStorage.getItem('restaurantEmpireUltimate');
+                if (saved) {
+                    gameState = JSON.parse(saved);
+                    console.log('Game loaded successfully');
+                    renderAll();
+                }
+            } catch (error) {
+                console.error('Failed to load game:', error);
+            }
+        }
+
+        function resetGame() {
+            if (confirm('Are you sure you want to start a new game? This will erase all progress.')) {
+                gameState = {
+                    cash: 200000,
+                    locations: [],
+                    menuItems: [],
+                    currentRecipe: {
+                        name: '',
+                        category: 'entree',
+                        description: '',
+                        price: 0,
+                        ingredients: []
+                    },
+                    selectedLocation: null
+                };
+                saveGame();
+                renderAll();
+                alert('New game started!');
+            }
+        }
+
+        // ========================================
+        // UTILITY FUNCTIONS
+        // ========================================
+        
+        function formatCurrency(amount) {
+            return '$' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // ========================================
+        // AUTO-SAVE
+        // ========================================
+        
+        setInterval(() => {
+            saveGame();
+        }, 30000); // Auto-save every 30 seconds
+
+        // Update recipe cost when price changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceInput = document.getElementById('recipePrice');
+            if (priceInput) {
+                priceInput.addEventListener('input', updateRecipeCostAnalysis);
+            }
+        });
+
+        // ========================================
+        // INITIALIZE ON LOAD
+        // ========================================
+        
+        window.onload = init;
+    </script>
+</body>
+</html>
